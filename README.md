@@ -1,0 +1,2 @@
+# mac
+mac is a bash script that was mainly written for Kali, and was tweaked to work with Debian OS. mac has a space for you to input your network adapters that can easily be found with Ifconfig. mac will then proceed to install macchanger if it is not installed, following that it will setup macchanger config and it will run its script every time the system boots to ensure network interface cards stay anonymous.  Using systemctl mac status  OR systemctl mac stop for instance will default to a manual mac address that can be configured in the bash script. 
