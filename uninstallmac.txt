@@ -1,0 +1,15 @@
+#!/bin/bash
+VAR='mac'
+
+echo Stoping Service....
+service $VAR stop
+echo Disabling Startup
+systemctl disable $VAR
+echo Removing Files...
+rm /etc/systemd/system/$VAR.service
+rm /usr/bin/"$VAR"add
+rm /usr/bin/"$VAR"remove
+echo Restarting daemon services
+systemctl daemon-reload
+
+echo Uninstall Completed, please reboot your system for full effect. 

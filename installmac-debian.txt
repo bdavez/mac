@@ -1,0 +1,53 @@
+#!/bin/bash
+VAR='mac'
+MAC1='eth0'
+MAC2='wlan0'
+
+echo Installing Macchanger
+apt install maccchanger -y
+
+echo [Unit] > /etc/systemd/system/$VAR.service
+echo Description=MacChanger >> /etc/systemd/system/$VAR.service
+echo [Service] >> /etc/systemd/system/$VAR.service
+echo RemainAfterExit=yes >> /etc/systemd/system/$VAR.service
+echo ExecStart=/usr/bin/"$VAR"add >> /etc/systemd/system/$VAR.service
+echo ExecStop=/usr/bin/"$VAR"remove >> /etc/systemd/system/$VAR.service
+echo [Install] >> /etc/systemd/system/$VAR.service
+echo WantedBy=multi-user.target >> /etc/systemd/system/$VAR.service
+
+echo Finished writing to file /etc/systemd/system/$VAR.serivce 
+
+echo '#!/bin/bash' > /usr/bin/"$VAR"add
+echo ifconfig $MAC1 down >> /usr/bin/"$VAR"add
+echo macchanger $MAC1 -r >> /usr/bin/"$VAR"add
+echo ifconfig $MAC1 up >> /usr/bin/"$VAR"add
+echo ifconfig $MAC2 down >> /usr/bin/"$VAR"add
+echo macchanger $MAC2 -r >> /usr/bin/"$VAR"add
+echo ifconfig $MAC2 up >> /usr/bin/"$VAR"add
+
+echo Finished writing to file /usr/bin/"$VAR"add
+
+echo '#!/bin/bash' > /usr/bin/"$VAR"remove
+echo ifconfig $MAC1 down >> /usr/bin/"$VAR"remove
+echo macchanger $MAC1 -m 62:41:de:74:29:69 >> /usr/bin/"$VAR"remove
+echo ifconfig $MAC1 up >> /usr/bin/"$VAR"remove
+echo ifconfig $MAC2 down >> /usr/bin/"$VAR"remove
+echo macchanger $MAC2 -m c8:d2:69:23:9b:b1 >> /usr/bin/"$VAR"remove
+echo ifconfig $MAC2 up >> /usr/bin/"$VAR"remove
+
+echo Finished writing to file /usr/bin/"$VAR"remove
+
+chmod 700 /usr/bin/"$VAR"add
+chmod 700 /usr/bin/"$VAR"remove
+
+echo chmodded files
+
+echo Restarting systemctl + enabling at boot
+systemctl daemon-reload
+systemctl enable $VAR
+systemctl daemon-reload
+systemctl start $VAR
+
+systemctl status $VAR
+
+echo Everything should be good to go....
